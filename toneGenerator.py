@@ -97,6 +97,3 @@ quit_button = ttk.Button(mainframe, text="Quit", command=root.destroy).grid(colu
 
 root.mainloop()
 
-
-
-#if START_IS_PRESSED and CHANNEL1_IS_ACTIVE.get():
