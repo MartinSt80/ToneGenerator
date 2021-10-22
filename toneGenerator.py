@@ -1,10 +1,12 @@
+import math
 from tkinter import *
 from tkinter import ttk
-import pygame, math
+import pygame
 import numpy as np
 
-pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=8192)
+pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=8192)
 root = Tk()
+
 
 def SineObject(*args):
 	frames = np.linspace(0, 2 * math.pi, 44100)
@@ -14,13 +16,16 @@ def SineObject(*args):
 			values.append(int(32767 * (math.sin(args[0] * n))))
 		else:
 			values.append(int(32767 * (0.5 * math.sin(args[1] * n) + 0.5 * math.sin(args[0] * n))))
-	return pygame.sndarray.make_sound(np.array(values))
+	return pygame.mixer.Sound(np.array(values))
+
 
 def checkChannel():
 	if CHANNEL1_IS_ACTIVE.get() or CHANNEL2_IS_ACTIVE.get():
 		startSound()
 	else:
-		snd.stop()
+		snd1.stop()
+		snd2.stop()
+
 
 def startpressed():
 	global START_IS_PRESSED
@@ -34,12 +39,11 @@ def stoppressed():
 
 def startSound(*args):
 	if START_IS_PRESSED:
-		if CHANNEL1_IS_ACTIVE.get() and CHANNEL2_IS_ACTIVE.get():
-			snd.play(SineObject(CHANNEL1_SETFREQ.get(), CHANNEL2_SETFREQ.get()), loops=-1)
-		elif CHANNEL1_IS_ACTIVE.get():
-			snd.play(SineObject(CHANNEL1_SETFREQ.get()), loops=-1)
-		elif CHANNEL2_IS_ACTIVE.get():
-			snd.play(SineObject(CHANNEL2_SETFREQ.get()), loops=-1)
+		if CHANNEL1_IS_ACTIVE.get():
+			snd1.play(SineObject(CHANNEL1_SETFREQ.get()), loops=-1)
+		if CHANNEL2_IS_ACTIVE.get():
+			snd2.play(SineObject(CHANNEL2_SETFREQ.get()), loops=-1)
+
 
 def state_of_play():
 	if not CHANNEL1_IS_ACTIVE.get() and not CHANNEL2_IS_ACTIVE.get():
@@ -47,7 +51,10 @@ def state_of_play():
 	else:
 		play_button.state(["!disabled"])
 
-snd = pygame.mixer.Channel(1)
+
+snd1 = pygame.mixer.Channel(1)
+snd2 = pygame.mixer.Channel(2)
+
 
 CHANNEL1_SETFREQ = IntVar()
 CHANNEL1_SETFREQ.set(400)
@@ -96,4 +103,5 @@ stop_button = ttk.Button(mainframe, text="Stop", command=stoppressed).grid(colum
 quit_button = ttk.Button(mainframe, text="Quit", command=root.destroy).grid(column=3, row=3)
 
 root.mainloop()
+
 
