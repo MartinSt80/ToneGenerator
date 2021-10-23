@@ -16,9 +16,9 @@ class ToneGenerator:
 		self.root = Tk()
 		self.root.title("Tone Generator")
 
-		self.channel1_freq = IntVar()
+		self.channel1_freq = StringVar()
 		self.channel1_freq.set(400)
-		self.channel2_freq = IntVar()
+		self.channel2_freq = StringVar()
 		self.channel2_freq.set(200)
 
 		self.sound_started = False
@@ -84,14 +84,16 @@ class ToneGenerator:
 		return play_button
 
 	def __start_sound(self, event=None):
+		self.channel1_freq.set(self.channel1_freq.get().split('.')[0])
+		self.channel2_freq.set(self.channel2_freq.get().split('.')[0])
 		if self.sound_started:
 			if self.channel1_active.get():
-				self.channel1_mixer.play(self.__calc_sine_sound(self.channel1_freq.get()), loops=-1)
+				self.channel1_mixer.play(self.__calc_sine_sound(int(self.channel1_freq.get())), loops=-1)
 			else:
 				self.channel1_mixer.stop()
 
 			if self.channel2_active.get():
-				self.channel2_mixer.play(self.__calc_sine_sound(self.channel2_freq.get()), loops=-1)
+				self.channel2_mixer.play(self.__calc_sine_sound(int(self.channel2_freq.get())), loops=-1)
 			else:
 				self.channel2_mixer.stop()
 
